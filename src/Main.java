@@ -1,4 +1,3 @@
-import javax.swing.plaf.synth.SynthDesktopIconUI;
 import java.util.concurrent.TimeUnit;
 
 
@@ -18,6 +17,6 @@ public class Main
         clock.submitDelay(0, 2.75);
         clock.submitDelay(0, 3);
 
-        System.out.println(clock.end());
+        System.out.println(clock.flush());
     }
 }

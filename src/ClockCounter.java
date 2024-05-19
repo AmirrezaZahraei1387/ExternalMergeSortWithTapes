@@ -52,7 +52,7 @@ public class ClockCounter {
 
     private TapeTimeInfo[] timeline;
 
-    private PurePointClock clock = new PurePointClock();
+    private final PurePointClock clock = new PurePointClock();
 
     private boolean activated_l = false;
 
@@ -77,26 +77,18 @@ public class ClockCounter {
 
     public double end(){
         checkClockActivation();
+
+        flushSok();
+
         double currentTime = current();
-
-        int max_index;
-        int i;
-
-        for(i = 0; i < timeline.length; ++i) if(timeline[i].isActive) break;
-
-        max_index = i;
-
-        for(++i; i < timeline.length; ++i)
-            if(timeline[i].isActive)
-                if(timeline[max_index].left(currentTime) < timeline[i].left(currentTime))
-                    max_index = i;
-
-        clock_offset += (max_index < timeline.length ? timeline[max_index].left(currentTime): 0.0);
-
-        currentTime = current();
-        eraseFinishedJobs(currentTime);
         stopAll();
         return currentTime;
+    }
+
+    public double flush(){
+        checkClockActivation();
+        flushSok();
+        return current();
     }
 
     public void submitDelay(int which, double length){
@@ -123,6 +115,27 @@ public class ClockCounter {
                 tape.deactivate();
         }
 
+    }
+
+    private void flushSok(){
+        double currentTime = current();
+
+        int max_index;
+        int i;
+
+        for(i = 0; i < timeline.length; ++i) if(timeline[i].isActive) break;
+
+        max_index = i;
+
+        for(++i; i < timeline.length; ++i)
+            if(timeline[i].isActive)
+                if(timeline[max_index].left(currentTime) < timeline[i].left(currentTime))
+                    max_index = i;
+
+        clock_offset += (max_index < timeline.length ? timeline[max_index].left(currentTime): 0.0);
+
+        currentTime = current();
+        eraseFinishedJobs(currentTime);
     }
 
     private void stopAll(){
