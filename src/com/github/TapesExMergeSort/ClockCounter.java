@@ -1,11 +1,7 @@
+package com.github.TapesExMergeSort;
+
 import java.time.Duration;
 import java.time.Instant;
-
-class ClockNotActivatedException extends RuntimeException {
-    public ClockNotActivatedException(String message){
-        super(message);
-    }
-}
 
 class PurePointClock{
     private Instant start_point;    // defines the start point of time
