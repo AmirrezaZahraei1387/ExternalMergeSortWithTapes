@@ -1,17 +1,29 @@
 import com.github.TapesExMergeSort.TapeSim;
-
+import com.github.TapesExMergeSort.TapeController;
+import com.github.TapesExMergeSort.ClockCounter;
 
 public class Main
 {
     public static void main(String[] args) throws InterruptedException {
 
-        TapeSim<Integer> tape = new TapeSim<>(10, 0, 0.01, 0.02, 0.02);
+        TapeSim<Integer>[] tapes = new TapeSim[]{
+                new TapeSim<>(10, 0, 0.01, 0.02, 0.02),
+                new TapeSim<>(10, 0, 0.01, 0.02, 0.02),
+                new TapeSim<>(10, 0, 0.01, 0.02, 0.02),
+                new TapeSim<>(10, 0, 0.01, 0.02, 0.02)};
 
-        tape.moveCursor(3);
-        tape.moveCursor(2);
+        ClockCounter clock = new ClockCounter(4);
 
-        tape.write(45);
-
-        System.out.println(tape.length());
+        TapeController<Integer> tapeCont = new TapeController<>(tapes, clock);
+        clock.start();
+        tapeCont.moveCursor(0, 4);
+        tapeCont.write(0, 54);
+        tapeCont.moveCursor(0, 4);
+        tapeCont.moveCursor(2, 3);
+        tapeCont.write(2, 78);
+        tapeCont.moveCursor(3, 9);
+        tapeCont.moveCursor(3, -9);
+        clock.flush();
+        System.out.println(tapeCont.length(0));
     }
 }

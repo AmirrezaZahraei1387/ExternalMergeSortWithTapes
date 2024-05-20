@@ -1,5 +1,6 @@
 package com.github.TapesExMergeSort;
 
+import javax.swing.plaf.synth.SynthDesktopIconUI;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -93,16 +94,19 @@ public class ClockCounter {
         eraseFinishedJobs(current());
 
         if(timeline[which].isActive){
-            clock_offset += timeline[which].left(currentTime);
+            timeline[which].length += length;
+        }else {
+            timeline[which].length = length;
+            timeline[which].start = current();
+            timeline[which].activate();
         }
-        timeline[which].length = length;
-        timeline[which].start = currentTime;
-        timeline[which].activate();
     }
 
-    private double current(){
-        return clock.now() + clock_offset;
+    public int length(){
+        return timeline.length;
     }
+
+    private double current(){return clock.now() + clock_offset;}
 
     private void eraseFinishedJobs(double now){
 
@@ -129,7 +133,6 @@ public class ClockCounter {
                     max_index = i;
 
         clock_offset += (max_index < timeline.length ? timeline[max_index].left(currentTime): 0.0);
-
         currentTime = current();
         eraseFinishedJobs(currentTime);
     }

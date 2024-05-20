@@ -8,6 +8,8 @@ interface TapeSimInter<T extends Serializable & Comparable<T>>{
     T read();
 
     void write(T record);
+    public int length();
+    public int getCursor();
 }
 
 interface TapeControllerInter<T extends Serializable & Comparable<T>>{
@@ -16,44 +18,44 @@ interface TapeControllerInter<T extends Serializable & Comparable<T>>{
     public T read(int which);
 
     public void write(int which, T record);
-}
 
-class TapeSimCostCounter{
-
-    private final double delay_on_spin;
-    private final double delay_on_read;
-    private final double delay_on_write;
-
-    private double currentCost;
-
-    public TapeSimCostCounter(double delay_on_spin, double delay_on_read, double delay_on_write){
-        this.delay_on_spin = delay_on_spin;
-        this.delay_on_read = delay_on_read;
-        this.delay_on_write = delay_on_write;
-    }
-
-    public void readCost(int recordCount){
-        currentCost =  delay_on_read * recordCount + delay_on_spin * (recordCount - 1);
-    }
-
-    public void writeCost(int recordCount){
-        currentCost = delay_on_write * recordCount + delay_on_spin * (recordCount - 1);
-    }
-
-    public void moveCost(int records){
-        currentCost = delay_on_spin * records;
-    }
-
-    public void reset(){
-        currentCost = 0;
-    }
-
-    public double getCurrentCost(){
-        return currentCost;
-    }
+    public int length(int which);
+    public int getCursor(int which);
 }
 
 public class TapeSim< T extends Serializable & Comparable<T>> implements TapeSimInter<T>{
+
+    private static class TapeSimCostCounter{
+
+        private final double delay_on_spin;
+        private final double delay_on_read;
+        private final double delay_on_write;
+
+        private double currentCost;
+
+        public TapeSimCostCounter(double delay_on_spin, double delay_on_read, double delay_on_write){
+            this.delay_on_spin = delay_on_spin;
+            this.delay_on_read = delay_on_read;
+            this.delay_on_write = delay_on_write;
+        }
+
+        public void readCost(int recordCount){
+            currentCost =  delay_on_read * recordCount + delay_on_spin * (recordCount - 1);
+        }
+
+        public void writeCost(int recordCount){
+            currentCost = delay_on_write * recordCount + delay_on_spin * (recordCount - 1);
+        }
+
+        public void moveCost(int records){
+            currentCost = delay_on_spin * records;
+        }
+
+        public double getCurrentCost(){
+            return currentCost;
+        }
+    }
+
     private Object[] records;
     private int size;
     private int cursor;
@@ -92,6 +94,12 @@ public class TapeSim< T extends Serializable & Comparable<T>> implements TapeSim
         records[cursor] = record;
     }
 
+    @Override
+    public int getCursor() {
+        return cursor;
+    }
+
+    @Override
     public int length(){
         return size;
     }
